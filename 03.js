@@ -1,51 +1,32 @@
 /*
-Understanding the this keyword, call, apply, and bind in JavaScript
-*/
-
-
-/*
-"implicit binding"
-- `this` will be the object left of the dot at call time
-*/
-
-var Person = function(name, age) {
-	return {
-		name: name,
-		age: age,
-		sayName: function() {
-			console.log(this.name);
-		},
-		mother: {
-			name: 'Stacey',
-			sayName: function() {
-				console.log(this.name);
-			}
-		}
-	};
-};
-var jim = Person('Jim', 42)
-jim.sayName(); // 'Jim'
-jim.mother.sayName(); // 'Stacey'
-
-
-/*
-"explicit binding":
-- `this` is the argument passed to `.call`, `.apply` (array based parameters), or `.bind` (binds argument to function, and returns new reference to function)
+The JavaScript Event Loop: A Simple Guide
 */
 
 /*
-"new binding"
-- when function is invoked with `new`, `this` refers to the object being constructed
-*/
-var Animal = function(color, name, type) {
-	this.color = color;
-	this.name = name;
-	this.type = type;
-};
-var zebra = new Animal('black and white', 'zorro', 'zebra');
 
-/*
-"window binding":
-- when it can't find reference to `this`, looks to window object
-- can use `'use strict';` which will prevent this
+three components:
+- call stack
+- task queue
+- web APIs (or in Node, C++ APIs)
+
+
+event loop:
+- checks if call stack is empty; if not, continue going through it
+- once call stack is empty, it pops the top element of task queue onto call stack
+
+In the example below:
+- first `log` executes, then popped off call stack
+- `setTimeout` is next up in call stack. inner anonymous function added to Web APIs, then popped off call stack
+- third `log` executes then popped off call stack
+- after 1000miliseconds, Web APIs pushes the anonymous function to the task queue
+- event loop sees call stack is empty, so it checks task queue and pushes the anonymous function onto call stack, and executes third `log`
+
 */
+
+console.log('First');
+setTimeout(function() {
+	console.log('Second');
+}, 1000);
+console.log('Third');
+
+// 'First', 'Third', then 'Second'

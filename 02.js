@@ -1,63 +1,51 @@
-/* 
-The Ultimate Guide to Execution Contexts, Hoisting, Scopes, and Closures in JavaScript 
+/*
+Understanding the this keyword, call, apply, and bind in JavaScript
 */
 
 
 /*
-
-"global execution context":
-- the main initial execution context, at the base of execution stack
-- always have the `window` and `this` properties:
-	- `window` is the global object
-	- `this` is the window object
-
-JS is single-threaded, and has two stages: "creation phase" and "execution phase"
-- "creation phase": variable declarations are assigned value of undefined ("hoisting"), and function declaration are placed in memory
-- "execution phase": value assignments to variables
-
-function call:
-- in the execution phase, a function call will create a new execution context for that function, within parent context
-- it in turn goes through a cration phase and execution phase
-- upon end of function call, context popped from execution stack
-
-scoping:
-- scoping goes from inside, to outside (parents and descendents) of execution contexts
-- if it doesn't exist in current or any descendent contexts, `UncaughtReferenceError`
-
-"closure scope":
-- an outer function can return an inner function, which is stored outside of context of outer function
-- then, when the inner function is called (outside), even though the context of the outer function is no longer in the stack, the inner function still has access to the outer function's context
-
+"implicit binding"
+- `this` will be the object left of the dot at call time
 */
 
-// example of closure:
-var count = 0;
-function makeAdder(x) {
-	return function inner(y) {
-		return x + y
+var Person = function(name, age) {
+	return {
+		name: name,
+		age: age,
+		sayName: function() {
+			console.log(this.name);
+		},
+		mother: {
+			name: 'Stacey',
+			sayName: function() {
+				console.log(this.name);
+			}
+		}
 	};
-}
-var add5 = makeAdder(5);
-count += add5(2); // count = 7
+};
+var jim = Person('Jim', 42)
+jim.sayName(); // 'Jim'
+jim.mother.sayName(); // 'Stacey'
+
 
 /*
-
-additionally:
-- in the global execution context, any variable will become property of `window` object
-- in browser/Node, variable declared without `var`, `let`, or `const` will also become property of `window` object
-
+"explicit binding":
+- `this` is the argument passed to `.call`, `.apply` (array based parameters), or `.bind` (binds argument to function, and returns new reference to function)
 */
 
-var name 'abc';
-function foo () {
-	bar = 'no declaration';
-}
-foo();
-console.log(window.name); // 'abc'
-console.log(window.bar); // 'no declaration'
+/*
+"new binding"
+- when function is invoked with `new`, `this` refers to the object being constructed
+*/
+var Animal = function(color, name, type) {
+	this.color = color;
+	this.name = name;
+	this.type = type;
+};
+var zebra = new Animal('black and white', 'zorro', 'zebra');
 
-
-
-
-
-
+/*
+"window binding":
+- when it can't find reference to `this`, looks to window object
+- can use `'use strict';` which will prevent this
+*/
