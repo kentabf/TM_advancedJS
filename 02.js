@@ -39,3 +39,25 @@ function makeAdder(x) {
 }
 var add5 = makeAdder(5);
 count += add5(2); // count = 7
+
+/*
+
+additionally:
+- in the global execution context, any variable will become property of `window` object
+- in browser/Node, variable declared without `var`, `let`, or `const` will also become property of `window` object
+
+*/
+
+var name 'abc';
+function foo () {
+	bar = 'no declaration';
+}
+foo();
+console.log(window.name); // 'abc'
+console.log(window.bar); // 'no declaration'
+
+
+
+
+
+
